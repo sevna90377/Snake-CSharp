@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Raylib_cs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -56,6 +57,54 @@ namespace Snake
                 nowaGlowa.Y = wysokoscEkranu - rozmiarSiatki;
 
             cialo[0] = nowaGlowa;
+        }
+
+        private void Rosnij()
+        {
+            rosnij = true;
+        }
+
+        public void ZmienKierunek(Vector2 nowyKierunek)
+        {
+            if ((kierunek.X + nowyKierunek.X != 0) || (kierunek.Y +
+            nowyKierunek.Y != 0))
+            {
+                kierunek = nowyKierunek;
+            }
+        }
+
+        public void Rysuj()
+        {
+            foreach (var segment in cialo)
+            {
+                Raylib.DrawRectangle((int)segment.X, (int)segment.Y,
+                rozmiarSiatki, rozmiarSiatki, Color.Green);
+            }
+        }
+
+        public bool SprawdzKolizje(Vector2 pozycja)
+        {
+            foreach (var segment in cialo)
+            {
+                if (segment == pozycja)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool SprawdzKolizjeZeSoba()
+        {
+            Vector2 glowa = cialo[0];
+            for (int i = 1; i < cialo.Count; i++)
+            {
+                if (cialo[i] == glowa)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
     }
