@@ -59,7 +59,7 @@ namespace Snake
             cialo[0] = nowaGlowa;
         }
 
-        private void Rosnij()
+        public void Rosnij()
         {
             rosnij = true;
         }

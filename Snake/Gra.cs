@@ -11,6 +11,7 @@ namespace Snake
     public class Gra
     {
         private Waz waz;
+        private Jedzenie jedzenie;
         private bool czyKoniecGry;
         private int szerokoscEkranu;
         private int wysokoscEkranu;
@@ -29,6 +30,7 @@ namespace Snake
             Raylib.SetTargetFPS(szybkosc);
 
             waz = new Waz(rozmiarSiatki, szerokoscEkranu, wysokoscEkranu);
+            jedzenie = new Jedzenie(szerokoscEkranu, wysokoscEkranu, rozmiarSiatki);
         }
         private void Rysuj()
         {
@@ -36,6 +38,7 @@ namespace Snake
             Raylib.ClearBackground(Raylib_cs.Color.Black);
 
             waz.Rysuj();
+            jedzenie.Rysuj();
 
             Raylib.DrawText(punkty.ToString().PadLeft(2, '0'), 20, 20, 40, Raylib_cs.Color.White);
 
@@ -62,10 +65,28 @@ namespace Snake
 
         public void Aktualizuj()
         {
+            if (czyKoniecGry)
+            {
+                if (Raylib.IsKeyPressed(KeyboardKey.Enter))
+                {
+                    UruchomPonownie();
+                }
+                return;
+            }
+
             if (Raylib.IsKeyPressed(KeyboardKey.Up)) waz.ZmienKierunek(new Vector2(0, -1));
             if (Raylib.IsKeyPressed(KeyboardKey.Down)) waz.ZmienKierunek(new Vector2(0, 1));
             if (Raylib.IsKeyPressed(KeyboardKey.Left)) waz.ZmienKierunek(new Vector2(-1, 0));
             if (Raylib.IsKeyPressed(KeyboardKey.Right)) waz.ZmienKierunek(new Vector2(1, 0));
+
+            if (waz.SprawdzKolizje(jedzenie.Pozycja))
+            {
+                waz.Rosnij();
+                jedzenie.GenerujNowaPozycje();
+                punkty++;
+                szybkosc = Math.Min(60, szybkosc + 1);
+                Raylib.SetTargetFPS(szybkosc);
+            }
 
             waz.Poruszaj();
 
@@ -74,6 +95,15 @@ namespace Snake
                 czyKoniecGry = true;
             }
 
+        }
+        public void UruchomPonownie()
+        {
+            punkty = 0;
+            szybkosc = 10;
+            waz = new Waz(rozmiarSiatki, szerokoscEkranu, wysokoscEkranu);
+            jedzenie = new Jedzenie(szerokoscEkranu, wysokoscEkranu, rozmiarSiatki);
+            czyKoniecGry = false;
+            Raylib.SetTargetFPS(szybkosc);
         }
     }
 }
